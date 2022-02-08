@@ -33,3 +33,6 @@ class Palette {
     },
   );
 }
+
+const GOLD_COLOR = Color.fromRGBO(210, 190, 110, 1);
+const GREEN_COLOR = Color.fromRGBO(0, 140, 97, 1);

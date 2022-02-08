@@ -1,20 +1,32 @@
 import 'package:transactions_viewer/screens/login_screen.dart';
 
-class User {
-  final int userId;
-  final String name;
-  final String department;
-  final String section;
-  User(
-      {required this.userId,
-      required this.name,
-      required this.department,
-      required this.section});
-}
+class UserInfo {
+  String? _userName;
+  String? _password;
 
-List<User> users = [
-  User(
-      userId: 1, name: 'محمد', department: DEPARTMENT[0], section: SECTIONS[0]),
-  User(userId: 2, name: 'علي', department: DEPARTMENT[1], section: SECTIONS[1]),
-  User(userId: 3, name: 'حسن', department: DEPARTMENT[2], section: SECTIONS[2]),
-];
+  UserInfo({String? userName, String? password}) {
+    if (userName != null) {
+      this._userName = userName;
+    }
+    if (password != null) {
+      this._password = password;
+    }
+  }
+
+  String? get userName => _userName;
+  set userName(String? userName) => _userName = userName;
+  String? get password => _password;
+  set password(String? password) => _password = password;
+
+  UserInfo.fromJson(Map<String, dynamic> json) {
+    _userName = json['userName'];
+    _password = json['password'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['userName'] = this._userName;
+    data['password'] = this._password;
+    return data;
+  }
+}

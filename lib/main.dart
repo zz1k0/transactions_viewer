@@ -4,7 +4,6 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:transactions_viewer/screens/login_screen.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-
 import 'color_config.dart';
 
 Future<void> main() async {
@@ -36,13 +35,28 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Personal Info',
       theme: ThemeData(
-        primarySwatch: Palette.zPrimaryColor,
-
-        //  primaryColor: const Color.fromRGBO(0, 140, 97, 0.5),
-        accentColor: const Color.fromRGBO(210, 190, 110, 1),
         fontFamily: GoogleFonts.cairo().fontFamily,
+        colorScheme:
+            ColorScheme.fromSwatch(primarySwatch: Palette.zPrimaryColor)
+                .copyWith(secondary: const Color.fromRGBO(210, 190, 110, 1)),
       ),
       home: const LoginScreen(),
     );
   }
 }
+
+
+
+
+/*
+
+user enter the app using name and password
+user retrive his personal info by reading qr 
+the qr converted to string and sent to server
+server retrive to client the pdf file of the contract and images for every single 
+which contain contract info and images 
+every iimage has guid that must be included with every url to be fetched 
+then merged with pdf file and display them as full pdf file that contains them 
+  
+
+*/

@@ -1,10 +1,12 @@
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:transactions_viewer/controllers/user_profile_controller.dart';
 import 'package:transactions_viewer/screens/camera_screen.dart';
 
 import 'package:transactions_viewer/screens/profile_screen.dart';
-import 'package:transactions_viewer/screens/sign_in_date_screen.dart';
+import 'package:transactions_viewer/screens/about_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,6 +16,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  initState() {
+    super.initState();
+  }
+
   ShapeBorder? bottomBarShape = const RoundedRectangleBorder(
     borderRadius: BorderRadius.all(Radius.circular(25)),
   );
@@ -38,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> pages = [
     const ProfileScreen(),
     CameraScreen(),
-    const SignInDateScreen()
+    const AboutScreen()
   ];
 
   @override
@@ -58,8 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor:
             snakeShape == SnakeShape.indicator ? selectedColor : null,
         unselectedItemColor: Colors.white,
-        showUnselectedLabels: showUnselectedLabels,
-        showSelectedLabels: showSelectedLabels,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
         currentIndex: _selectedItemPosition,
         onTap: (index) => setState(() => _selectedItemPosition = index),
         items: const [
