@@ -19,7 +19,7 @@ class PersonalContractInfoController extends GetxController {
     await Permission.camera.request();
   }
 
-  Future getContractDetails(String ndk) async {
+  Future getContractDetails(qrCode) async {
     //scan the qr code
     await _scan();
 
@@ -28,7 +28,8 @@ class PersonalContractInfoController extends GetxController {
 
     String? token = _sharedPreferences.getString('token');
 
-    var url = Uri.parse('http://138.68.80.117/api/GetContractByUserReader/NDk');
+    var url =
+        Uri.parse('http://138.68.80.117/api/GetContractByUserReader/${qrCode}');
 
     var response = await http.get(
       url,
@@ -54,6 +55,10 @@ class PersonalContractInfoController extends GetxController {
       _sharedPreferences.setString('pdf_url', pdfUrl.value);
 
       Get.to(() => const PDFViewer());
+    } else if (response.statusCode == 404) {
+      zSnackBarInfo("خطأ", "لايوجد", Colors.red);
+    } else if (response.statusCode == 403) {
+      zSnackBarInfo("خطأ", "غير مسموح لهذا المستخدم بعرض الملف", Colors.red);
     } else {
       zSnackBarInfo("خطأ", "خطأ في الخادم", Colors.red);
     }

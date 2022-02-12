@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 textInput(String title, controller) {
-  return Padding(
-    padding: const EdgeInsets.all(10.0),
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
     child: TextField(
       controller: controller,
       style: GoogleFonts.cairo(

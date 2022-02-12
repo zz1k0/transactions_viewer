@@ -69,10 +69,22 @@ class _WrapperPageState extends State<WrapperPage> {
 
     SharedPreferences _sharedPrefs = await SharedPreferences.getInstance();
 
-    setState(() {
-      loggedIn = _sharedPrefs.getString('username');
-      loading = false;
-    });
+    var currentDate = DateFormat.yMEd().add_jms().format(DateTime.now());
+
+    var expireDate = DateFormat.yMEd().add_jms().format(
+        DateTime.parse(_sharedPrefs.getString('expireDate') ?? '2020-01-01'));
+
+    if (currentDate.compareTo(expireDate) > 0) {
+      setState(() {
+        loggedIn = null;
+        loading = false;
+      });
+    } else {
+      setState(() {
+        loggedIn = _sharedPrefs.getString('username');
+        loading = false;
+      });
+    }
   }
 
   @override

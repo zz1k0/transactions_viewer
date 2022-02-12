@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transactions_viewer/controllers/user_profile_controller.dart';
+import 'package:transactions_viewer/screens/login_screen.dart';
 import 'package:transactions_viewer/widget/text_view_with_value.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -44,6 +46,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       'الايميل', _userProfileController.email.value.toString()),
                   textViewWithValue('رقم الهاتف',
                       _userProfileController.phoneNumber.value.toString()),
+                  ElevatedButton(
+                    onPressed: () async {
+                      SharedPreferences _sharedPreferences =
+                          await SharedPreferences.getInstance();
+                      _sharedPreferences.setString('username', '');
+                      _sharedPreferences.setString('expireDate', '');
+
+                      Get.off(const LoginScreen());
+                    },
+                    child: Text(
+                      'تسجيل خروج',
+                      style: GoogleFonts.cairo(
+                        fontSize: 22,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

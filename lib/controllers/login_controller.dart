@@ -29,9 +29,11 @@ class LoginController {
       var decoded = json.decode(response.body);
 
       var token = decoded['token'];
+      var expireDate = decoded['expire'];
 
       if (token != null || token != '') {
         _sharedPreferences.setString('token', decoded['token']);
+        _sharedPreferences.setString('expireDate', decoded['expire']);
         // send user and pass
         //server response
         // check the json for token

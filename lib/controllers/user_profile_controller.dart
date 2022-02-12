@@ -20,9 +20,6 @@ class UserProfileController extends GetxController {
     SharedPreferences _sharedPreferences =
         await SharedPreferences.getInstance();
 
-    print('+++++++++++++++++++++++++++++++');
-    print(_sharedPreferences.getString('username'));
-
     String? token = _sharedPreferences.getString('token');
 
     var url = Uri.parse(apiGetProfile);
