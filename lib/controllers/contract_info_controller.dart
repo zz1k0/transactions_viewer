@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,7 +17,6 @@ class PersonalContractInfoController extends GetxController {
 
   Future _scan() async {
     await Permission.camera.request();
-    String? barcode = await scanner.scan();
   }
 
   Future getContractDetails(String ndk) async {

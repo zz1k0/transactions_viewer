@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:transactions_viewer/widget/button_view.dart';
 
 import '../color_config.dart';
+import '../main.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({Key? key}) : super(key: key);
@@ -47,7 +48,7 @@ class AboutScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  DateTime.now().toString().substring(0, 16),
+                  dateLogIn,
                   style: GoogleFonts.cairo(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,

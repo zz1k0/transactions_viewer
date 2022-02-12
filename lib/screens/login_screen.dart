@@ -21,8 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void initialInternetChecker() {
     // actively listen for status updates
-    final StreamSubscription<InternetConnectionStatus> listener =
-        InternetConnectionChecker().onStatusChange.listen(
+    // final StreamSubscription<InternetConnectionStatus> listener =
+    InternetConnectionChecker().onStatusChange.listen(
       (InternetConnectionStatus status) async {
         switch (status) {
           case InternetConnectionStatus.connected:
@@ -94,7 +94,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 20.0),
                     ),
                   ),
-                  onPressed: () async => await _loginController.loginRequest(),
+                  onPressed: () async => await _loginController.loginRequest(
+                      usernameController.text, passwordController.text),
                 ),
               ],
             ),
