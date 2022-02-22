@@ -1,35 +1,46 @@
 import 'dart:convert';
 import 'package:permission_handler/permission_handler.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:transactions_viewer/models/personal_contract_info.dart';
+import 'package:transactions_viewer/constants/api_path.dart';
 import 'package:http/http.dart' as http;
-import 'package:transactions_viewer/screens/pdf_viewer_screen.dart';
 import 'package:transactions_viewer/widget/snack_bar.dart';
 
 class PersonalContractInfoController extends GetxController {
-  final PersonalContractInfoModel _personalContractInfoModel =
-      PersonalContractInfoModel();
+  // final PersonalContractInfoModel _personalContractInfoModel =
+  //     PersonalContractInfoModel();
+
+  PersonalContractInfoController({this.qrCode});
+  final qrCode;
 
   var pdfUrl = ''.obs;
+  var vailedUrl = false.obs;
 
-  Future _scan() async {
-    await Permission.camera.request();
+  var fromUser = ''.obs;
+  var toUser = ''.obs;
+  var isRejected = ''.obs;
+  var isCanceled = ''.obs;
+
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    await getContractDetails(qrCode);
+    //  await getPDFUrl();
+    // print('show post return value: $posts
+    // ');
   }
 
   Future getContractDetails(qrCode) async {
     //scan the qr code
-    await _scan();
+    await Permission.camera.request();
 
     SharedPreferences _sharedPreferences =
         await SharedPreferences.getInstance();
 
     String? token = _sharedPreferences.getString('token');
 
-    var url =
-        Uri.parse('http://138.68.80.117/api/GetContractByUserReader/${qrCode}');
+    var url = Uri.parse(apiGetQrInfo + qrCode);
 
     var response = await http.get(
       url,
@@ -42,19 +53,18 @@ class PersonalContractInfoController extends GetxController {
     if (response.statusCode == 200) {
       var decoded = json.decode(response.body);
 
-      var fromUser =
-          decoded['contractModel']['contractPartsDetails']['from']['id'];
+      fromUser.value =
+          decoded['contractModel']['contractPartsDetails']['from']['fullName'];
       //identity for the user to
-      var toUser = decoded['contractModel']['contractPartsDetails']['to']['id'];
+      toUser.value =
+          decoded['contractModel']['contractPartsDetails']['to']['fullName'];
 
-      pdfUrl.value =
-          decoded['pdf'].substring(0, decoded['pdf'].length - 3) + "pdf";
+      isRejected.value = decoded['contractModel']['isRejected'];
 
-      _sharedPreferences.setString('fromUser', fromUser);
-      _sharedPreferences.setString('toUser', toUser);
-      _sharedPreferences.setString('pdf_url', pdfUrl.value);
+      isCanceled.value = decoded['contractModel']['isCanceled'];
 
-      Get.to(() => const PDFViewer());
+      // pdfUrl.value =
+      //     decoded['pdf'].substring(0, decoded['pdf'].length - 3) + "pdf";
     } else if (response.statusCode == 404) {
       zSnackBarInfo("خطأ", "لايوجد", Colors.red);
     } else if (response.statusCode == 403) {
@@ -64,5 +74,60 @@ class PersonalContractInfoController extends GetxController {
     }
   }
 
-  getPDFUrl() => pdfUrl;
+  // getPDFUrl() async {
+  //   try {
+  //     SharedPreferences _sharedPreferences =
+  //         await SharedPreferences.getInstance();
+
+  //     String? token = _sharedPreferences.getString('token');
+
+  //     pdfUrl.value = pdfUrl.value
+  //             .toString()
+  //             .substring(0, pdfUrl.value.toString().length - 3) +
+  //         "pdf";
+
+  //     var url = Uri.parse(pdfUrl.value);
+
+  //     var response = await http.get(
+  //       url,
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       //if the file readable
+  //       // fromUser.value = _sharedPreferences.getString('fromUser')!;
+  //       // toUser.value = _sharedPreferences.getString('toUser')!;
+  //       // isRejected.value = _sharedPreferences.getString('isRejected')!;
+  //       // isCancelled.value = _sharedPreferences.getString('isCanceled')!;
+
+  //       vailedUrl.value = true;
+  //       return true;
+  //     } else if (response.statusCode == 404) {
+  //       // zSnackBarInfo("خطأ", "لا يوجد ملف بهذا الاسم", Colors.red);
+  //       vailedUrl.value = false;
+  //       return false;
+  //     } else if (response.statusCode == 403) {
+  //       // zSnackBarInfo("خطأ", "لا يوجد صلاحية لفتح الملف", Colors.red);
+  //       vailedUrl.value = false;
+  //       return false;
+  //     } else if (response.statusCode == 401) {
+  //       // zSnackBarInfo("خطأ", "يجب تسجيل الدخول اولا", Colors.red);
+  //       vailedUrl.value = false;
+  //       return false;
+  //     } else {
+  //       //  zSnackBarInfo(
+  //       //    "خطأ", "${response.statusCode.toString()}  رمز الخطأ", Colors.red);
+  //       vailedUrl.value = false;
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     // Get.off(const HomeScreen());
+  //     // zSnackBarInfo("خطأ", e.toString(), Colors.red);
+  //     vailedUrl.value = false;
+  //     return false;
+  //   }
+  // }
 }

@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   SnakeBarBehaviour snakeBarStyle = SnakeBarBehaviour.floating;
   EdgeInsets padding = const EdgeInsets.all(12);
 
-  int _selectedItemPosition = 1;
+  int _selectedItemPosition = 0;
   SnakeShape snakeShape = SnakeShape.circle;
 
   bool showSelectedLabels = true;

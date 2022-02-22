@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transactions_viewer/screens/home_screen.dart';
+import 'package:transactions_viewer/screens/loading_page.dart';
 import 'package:transactions_viewer/screens/login_screen.dart';
+import 'package:transactions_viewer/widget/snack_bar.dart';
 import 'color_config.dart';
 
 var dateLogIn = DateFormat.yMEd().add_jms().format(DateTime.now());
@@ -62,34 +65,53 @@ class _WrapperPageState extends State<WrapperPage> {
 
   var loading = true;
   String? loggedIn = '';
+
   checkSavedLogin() async {
-    setState(() {
-      loading = true;
-    });
+    setState(() => loading = true);
 
     SharedPreferences _sharedPrefs = await SharedPreferences.getInstance();
 
     var currentDate = DateFormat.yMEd().add_jms().format(DateTime.now());
 
     var expireDate = DateFormat.yMEd().add_jms().format(
-        DateTime.parse(_sharedPrefs.getString('expireDate') ?? '2020-01-01'));
+          DateTime.parse(
+            _sharedPrefs.getString('expireDate') == null ||
+                    _sharedPrefs.getString('expireDate') == ''
+                ? DateTime.now().toString()
+                : _sharedPrefs.getString('expireDate').toString(),
+          ),
+        );
 
     if (currentDate.compareTo(expireDate) > 0) {
-      setState(() {
-        loggedIn = null;
-        loading = false;
-      });
+      //must login again
+      loggedIn = null;
     } else {
-      setState(() {
-        loggedIn = _sharedPrefs.getString('username');
-        loading = false;
-      });
+      // go to home page
+      loggedIn = _sharedPrefs.getString('username');
     }
+
+    setState(() => loading = false);
   }
 
   @override
   void initState() {
     checkSavedLogin();
+
+    InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) async {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            zSnackBarInfo(
+                'متصل بالأنترنت', 'اتصال انترنت امن متوفر', Colors.green);
+            break;
+          case InternetConnectionStatus.disconnected:
+            zSnackBarInfo('غير متصل', 'فشل الأتصال بالأنترنت', Colors.red);
+
+            break;
+        }
+      },
+    );
+
     // TODO: implement initState
     super.initState();
   }
@@ -98,9 +120,7 @@ class _WrapperPageState extends State<WrapperPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: loading == true
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? LoadingPage(text: 'Loading...')
           : loggedIn == null || loggedIn == ''
               ? const LoginScreen()
               : const HomeScreen(),
@@ -123,3 +143,5 @@ then merged with pdf file and display them as full pdf file that contains them
   
 
 */
+
+
