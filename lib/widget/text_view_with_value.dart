@@ -3,13 +3,13 @@ import 'package:transactions_viewer/widget/text_view.dart';
 
 textViewWithValue(text, value) {
   return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 12.0),
+    margin: const EdgeInsets.symmetric(horizontal: 4.0),
     child: SingleChildScrollView(
       child: Column(
         children: [
           Container(
             alignment: Alignment.center,
-            margin: const EdgeInsets.all(15.0),
+            margin: const EdgeInsets.symmetric(vertical: 8.0 , horizontal: 2.0),
             decoration: BoxDecoration(
               color: const Color.fromRGBO(210, 190, 110, 1),
               borderRadius: BorderRadius.circular(8.0),
@@ -17,7 +17,7 @@ textViewWithValue(text, value) {
             child: Text(
               text,
               style: const TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),

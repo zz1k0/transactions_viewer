@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:transactions_viewer/controllers/contract_info_controller.dart';
 import 'package:transactions_viewer/screens/home_screen.dart';
+import 'package:transactions_viewer/screens/loading_page.dart';
 import 'package:transactions_viewer/widget/text_view_with_value.dart';
 
 class PDFViewer extends StatefulWidget {
@@ -14,9 +15,21 @@ class PDFViewer extends StatefulWidget {
 }
 
 class _PDFViewerState extends State<PDFViewer> {
+  final PersonalContractInfoController _personalContractInfoController =
+  Get.put(PersonalContractInfoController());
+
+  bool _loading =true ;
+
+
   @override
   void initState() {
+    loadContractInfo();
     super.initState();
+
+  }
+
+  loadContractInfo()async{
+    await _personalContractInfoController.getContractDetails().then((value) =>   setState(() => _loading = false));
   }
 
   final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
@@ -24,16 +37,13 @@ class _PDFViewerState extends State<PDFViewer> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement initState
-    final PersonalContractInfoController _personalContractInfoController =
-        Get.put(PersonalContractInfoController());
 
     return WillPopScope(
       onWillPop: () async {
-        _personalContractInfoController.dispose();
         Get.off(const HomeScreen());
-        return false;
+         return false;
       },
-      child: Scaffold(
+      child: _loading ? LoadingPage(text: 'جاري التحميل') : Scaffold(
         body: SafeArea(
           child:
               // _personalContractInfoController.vailedUrl.value == true
@@ -42,19 +52,36 @@ class _PDFViewerState extends State<PDFViewer> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              onPressed: () => Get.to(
-                                JustContractView(),
-                              ),
-                              child: Text(
-                                "عرض العقد لوحده",
-                                style: GoogleFonts.cairo(
-                                  fontSize: 20,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  onPressed: () => Get.to(
+                                    JustContractView(pdf:   _personalContractInfoController.pdfUrl.value,),
+                                  ),
+                                  child: Text(
+                                    "عرض العقد لوحده",
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 20,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  onPressed: () => Get.off(const HomeScreen()),
+                                  child: Text(
+                                    "رجوع",
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const Divider(),
                           // _personalContractInfoController.vailedUrl.value != true
@@ -72,13 +99,15 @@ class _PDFViewerState extends State<PDFViewer> {
                             height: 500,
                             padding: const EdgeInsets.all(5.0),
                             child: SfPdfViewer.network(
-                              'http://138.68.80.117/Reports/4ac208f5-e7d3-495d-8987-dc4d525cf5de.Pdf',
+                              _personalContractInfoController.pdfUrl.value.isEmpty
+                                  ?  'http://138.68.80.117/Reports/4ac208f5-e7d3-495d-8987-dc4d525cf5de.pdf'
+                                  : _personalContractInfoController.pdfUrl.value ,
                               key: _pdfViewerKey,
                             ),
                           ),
-                          textViewWithValue('من المستخدم',
+                          textViewWithValue('من ',
                               _personalContractInfoController.fromUser.value),
-                          textViewWithValue('الى المستخدم',
+                          textViewWithValue('الى ',
                               _personalContractInfoController.toUser.value),
                           textViewWithValue(
                               ' صلاحية العقد',
@@ -125,15 +154,16 @@ class _PDFViewerState extends State<PDFViewer> {
 }
 
 class JustContractView extends StatelessWidget {
-  JustContractView({Key? key}) : super(key: key);
-  final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
 
+  JustContractView({Key? key , required this.pdf }) : super(key: key);
+  final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
+  final String pdf ;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: SfPdfViewer.network(
-          'http://138.68.80.117/Reports/4ac208f5-e7d3-495d-8987-dc4d525cf5de.Pdf',
+          pdf,
           key: _pdfViewerKey,
         ),
       ),

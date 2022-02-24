@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:transactions_viewer/controllers/login_controller.dart';
 import 'package:transactions_viewer/screens/loading_page.dart';
@@ -18,18 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-
-    //internet conncetion checker
   }
 
-  // void initialInternetChecker() {
-  //   // actively listen for status updates
-  //   // final StreamSubscription<InternetConnectionStatus> listener =
-
-  //   // close listener after 30 seconds, so the program doesn't run forever
-  //   // await Future<void>.delayed(const Duration(seconds: 1));
-  //   // await listener.cancel();
-  // }
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -48,6 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
             textAlign: TextAlign.center,
           ),
         ),
+        automaticallyImplyLeading: true,
+        actions: [],
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
@@ -58,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     children: [
                       textInput('الأسم', usernameController),
-                      textInput('كلمة المرور', passwordController),
+                      textInput('كلمة المرور', passwordController , isScureText: true),
                       const Divider(),
                       const SizedBox(
                         height: 5.0,
@@ -77,11 +70,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           onPressed: () async {
                             setState(() => _loading = true);
-                            await _loginController
+                                 await _loginController
                                 .loginRequest(usernameController.text,
                                     passwordController.text)
-                                .then((value) =>
-                                    setState(() => _loading = false));
+                                .then((loginStatus ) =>
+                                    setState(() =>  _loading = false  ));
                           }),
                     ],
                   ),

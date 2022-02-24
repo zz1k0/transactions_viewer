@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //screens
   List<Widget> pages = [
     const ProfileScreen(),
-    CameraScreen(),
+    const CameraScreen(),
     const AboutScreen()
   ];
 

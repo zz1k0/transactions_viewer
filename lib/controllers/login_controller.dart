@@ -74,7 +74,7 @@ class LoginController {
             _userProfile.userRead!.userReaderAttachmentsReadDto![1].id
                 .toString());
       } else {
-        zSnackBarInfo("", "حدث خطأ", GOLD_COLOR);
+        zSnackBarInfo(  "حدث خطأ", GOLD_COLOR);
       }
     } catch (e) {
       // zSnackBarInfo("حدث خطأ في الخادم", e.toString(), GOLD_COLOR);
@@ -82,7 +82,7 @@ class LoginController {
   }
 
   //login api
-  Future<void> loginRequest(String username, String password) async {
+  Future<bool> loginRequest(String username, String password) async {
     try {
       SharedPreferences _sharedPreferences =
           await SharedPreferences.getInstance();
@@ -101,8 +101,14 @@ class LoginController {
         var token = decoded['token'];
         var expireDate = decoded['expire'];
 
+      // check if the token and expiration date not null
+      // empty
+
+
         if ((token != null || token != '') &&
             (expireDate != null || expireDate != '')) {
+
+
           _sharedPreferences.setString('token', token);
           _sharedPreferences.setString('expireDate', expireDate);
 
@@ -115,21 +121,36 @@ class LoginController {
           Get.off(() => const HomeScreen());
 
           //show snackbar
-          zSnackBarInfo("عمليه ناجحة", "اسم المستخدم موجود", GOLD_COLOR);
+          zSnackBarInfo( "اسم المستخدم موجود عمليه ناجحة", GOLD_COLOR);
+
+          return true;
         } else {
           //Show snackbar
-          zSnackBarInfo(" ${response.statusCode.toString()} خطأ",
-              "خطأ في الخادم", Colors.red);
+          zSnackBarInfo(
+              " ${response.statusCode.toString()} خطأ في الخادم",
+                Colors.red);
+          return false ;
         }
-      } else if (response.statusCode == 401) {
-        // if the server response is not 200
+      } else if (response.statusCode == 401 || response.statusCode == 400) {
+
         zSnackBarInfo(
-            "خطأ",
-            "${response.statusCode.toString()}  تأكد من معلومات الدخول",
+            "تأكد من معلومات الدخول",
             Colors.red);
+
+        return false ;
+
       }
+      // if the server response code is anything else
+      zSnackBarInfo(
+          "${response.statusCode.toString()} Status Code  خطأ",
+          Colors.red);
+
+      return false ;
+
+
     } catch (e) {
-      zSnackBarInfo("حدث خطأ", e.toString(), Colors.red);
+      zSnackBarInfo(  '${e.toString()}  حدث خطأ' , Colors.red);
+      return false ;
     }
   }
 }

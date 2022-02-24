@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:transactions_viewer/constants/arabic_text.dart';
 import 'package:transactions_viewer/screens/home_screen.dart';
 import 'package:transactions_viewer/screens/loading_page.dart';
 import 'package:transactions_viewer/screens/login_screen.dart';
@@ -101,11 +102,10 @@ class _WrapperPageState extends State<WrapperPage> {
       (InternetConnectionStatus status) async {
         switch (status) {
           case InternetConnectionStatus.connected:
-            zSnackBarInfo(
-                'متصل بالأنترنت', 'اتصال انترنت امن متوفر', Colors.green);
+            zSnackBarInfo(internetAccessArabicText , Colors.green);
             break;
           case InternetConnectionStatus.disconnected:
-            zSnackBarInfo('غير متصل', 'فشل الأتصال بالأنترنت', Colors.red);
+            zSnackBarInfo(noInternetAccessArabicText , Colors.red);
 
             break;
         }
@@ -129,6 +129,23 @@ class _WrapperPageState extends State<WrapperPage> {
 }
 
 
+ /*
+
+ flutter app start from splash page loading to main wrapper
+ then go to check if the user signed or not
+ then check the internet connection for both network wifi and mobile network
+ no internet go to loading page
+ user in go to home page
+ not go to login page
+ from login page go to profile if success login process
+ load profile info during this operation
+ tell the user that the current user is founded
+ i will stop explaining the details here coz i want to study amar material
+ best regards
+
+
+
+*/
 
 
 /*

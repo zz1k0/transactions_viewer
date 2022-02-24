@@ -11,8 +11,8 @@ class PersonalContractInfoController extends GetxController {
   // final PersonalContractInfoModel _personalContractInfoModel =
   //     PersonalContractInfoModel();
 
-  PersonalContractInfoController({this.qrCode});
-  final qrCode;
+
+   var qrCode = ''.obs ;
 
   var pdfUrl = ''.obs;
   var vailedUrl = false.obs;
@@ -22,56 +22,63 @@ class PersonalContractInfoController extends GetxController {
   var isRejected = ''.obs;
   var isCanceled = ''.obs;
 
-  @override
-  Future<void> onInit() async {
-    super.onInit();
-    await getContractDetails(qrCode);
-    //  await getPDFUrl();
-    // print('show post return value: $posts
-    // ');
-  }
 
-  Future getContractDetails(qrCode) async {
-    //scan the qr code
-    await Permission.camera.request();
 
-    SharedPreferences _sharedPreferences =
-        await SharedPreferences.getInstance();
+  Future<bool> getContractDetails() async {
+    
+    try {
 
-    String? token = _sharedPreferences.getString('token');
+      //scan the qr code
+      await Permission.camera.request();
 
-    var url = Uri.parse(apiGetQrInfo + qrCode);
+      SharedPreferences _sharedPreferences =
+      await SharedPreferences.getInstance();
 
-    var response = await http.get(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $token',
-      },
-    );
+      String? token = _sharedPreferences.getString('token');
 
-    if (response.statusCode == 200) {
-      var decoded = json.decode(response.body);
+      var url = Uri.parse(apiGetQrInfo + qrCode.value);
 
-      fromUser.value =
-          decoded['contractModel']['contractPartsDetails']['from']['fullName'];
-      //identity for the user to
-      toUser.value =
-          decoded['contractModel']['contractPartsDetails']['to']['fullName'];
+      var response = await http.get(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-      isRejected.value = decoded['contractModel']['isRejected'];
+      if (response.statusCode == 200) {
+        var decoded = json.decode(response.body);
 
-      isCanceled.value = decoded['contractModel']['isCanceled'];
+        fromUser.value =
+        decoded['contractModel']['contractPartsDetails']['from']['fullName'];
+        //identity for the user to
+        toUser.value =
+        decoded['contractModel']['contractPartsDetails']['to']['fullName'];
 
-      // pdfUrl.value =
-      //     decoded['pdf'].substring(0, decoded['pdf'].length - 3) + "pdf";
-    } else if (response.statusCode == 404) {
-      zSnackBarInfo("خطأ", "لايوجد", Colors.red);
-    } else if (response.statusCode == 403) {
-      zSnackBarInfo("خطأ", "غير مسموح لهذا المستخدم بعرض الملف", Colors.red);
-    } else {
-      zSnackBarInfo("خطأ", "خطأ في الخادم", Colors.red);
+        isRejected.value = decoded['contractModel']['isRejected'];
+
+        isCanceled.value = decoded['contractModel']['isCanceled'];
+
+        pdfUrl.value =
+            decoded['pdf'].substring(0, decoded['pdf'].length - 3) + "pdf";
+        return true;
+
+      } else if (response.statusCode == 404) {
+        zSnackBarInfo(  "لايوجد", Colors.red);
+        return false;
+
+      } else if (response.statusCode == 403) {
+        zSnackBarInfo(  "غير مسموح لهذا المستخدم بعرض الملف", Colors.red);
+        return false;
+
+      }
+        zSnackBarInfo(  "خطأ في الخادم", Colors.red);
+        return false;
+    } catch (e) {
+        zSnackBarInfo(e.toString(), Colors.red );
+        return false;
     }
+
   }
 
   // getPDFUrl() async {

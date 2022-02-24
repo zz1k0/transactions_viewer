@@ -73,9 +73,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       textViewWithValue('أسم المستخدم', user),
                       textViewWithValue('الايميل', email),
                       textViewWithValue('رقم الهاتف', phoneNumber),
-                      textViewWithValue('المهنة', careerTitle),
+                      textViewWithValue('العنوان الوظيفي', careerTitle),
                       textViewWithValue('المدينة', province),
-                      textViewWithValue('رقم الهوية', nationalityNumber),
+
                       ElevatedButton(
                         onPressed: () async {
                           SharedPreferences _sharedPreferences =
@@ -83,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _sharedPreferences.setString('username', '');
                           _sharedPreferences.setString('expireDate', '');
 
-                          Get.off(const LoginScreen());
+                         await  Get.off(const LoginScreen());
                         },
                         child: Text(
                           'تسجيل خروج',
